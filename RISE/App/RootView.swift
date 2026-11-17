@@ -94,7 +94,9 @@ struct RootView: View {
     /// Opens a debug-requested screen so CI can capture it without UI automation.
     private func openRequestedScreenshotScreen() {
         #if DEBUG
-        guard LaunchOptions.opensChallengePreview, let alarm = alarms.first else { return }
+        guard LaunchOptions.opensChallengePreview else { return }
+        let alarm = alarms.first { $0.challengeType == .math } ?? alarms.first
+        guard let alarm else { return }
         appState.beginChallenge(for: alarm.id, isPreview: true)
         #endif
     }

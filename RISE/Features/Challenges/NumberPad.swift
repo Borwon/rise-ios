@@ -20,7 +20,7 @@ struct NumberPad: View {
                     .font(.system(size: 22, weight: .medium))
                     .foregroundStyle(RISETheme.Colors.muted)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 60)
+                    .frame(height: 56)
                     .background(RISETheme.Colors.elevated)
                     .clipShape(RoundedRectangle(cornerRadius: RISETheme.Radius.small, style: .continuous))
             }
@@ -28,7 +28,7 @@ struct NumberPad: View {
             .accessibilityLabel("Delete last digit")
 
             key(0)
-            Color.clear.frame(height: 60)
+            Color.clear.frame(height: 56)
         }
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.5)
@@ -42,7 +42,7 @@ struct NumberPad: View {
                 .font(.system(size: 26, weight: .medium, design: .rounded))
                 .foregroundStyle(RISETheme.Colors.text)
                 .frame(maxWidth: .infinity)
-                .frame(height: 60)
+                .frame(height: 56)
                 .background(RISETheme.Colors.elevated)
                 .clipShape(RoundedRectangle(cornerRadius: RISETheme.Radius.small, style: .continuous))
                 .contentShape(RoundedRectangle(cornerRadius: RISETheme.Radius.small, style: .continuous))

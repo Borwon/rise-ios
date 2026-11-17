@@ -61,7 +61,7 @@ struct ChallengeFlowView: View {
                 .padding(.top, RISETheme.Spacing.xs)
 
             ScrollView {
-                VStack(alignment: .leading, spacing: RISETheme.Spacing.lg) {
+                VStack(alignment: .leading, spacing: RISETheme.Spacing.md) {
                     Text(challengeType.title)
                         .font(RISETheme.Typography.sectionTitle)
                         .foregroundStyle(RISETheme.Colors.text)
@@ -73,7 +73,7 @@ struct ChallengeFlowView: View {
                             .transition(.opacity)
                     }
                 }
-                .padding(.bottom, RISETheme.Spacing.xl)
+                .padding(.bottom, RISETheme.Spacing.md)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
