@@ -9,7 +9,14 @@ struct RISEApp: App {
 
     init() {
         do {
-            container = try PersistenceController.makeContainer()
+            let container = try PersistenceController.makeContainer()
+            #if DEBUG
+            LaunchOptions.seedDemoDataIfNeeded(context: ModelContext(container))
+            if LaunchOptions.skipsOnboarding {
+                UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            }
+            #endif
+            self.container = container
         } catch {
             fatalError("RISE. could not open its local database: \(error)")
         }

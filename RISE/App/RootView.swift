@@ -9,16 +9,27 @@ struct RootView: View {
     @Query private var alarms: [Alarm]
     @Query private var history: [AlarmHistory]
 
+    @State private var selectedTab: Int
+
+    init() {
+        #if DEBUG
+        _selectedTab = State(initialValue: LaunchOptions.initialTab)
+        #else
+        _selectedTab = State(initialValue: 0)
+        #endif
+    }
+
     var body: some View {
         @Bindable var appState = appState
 
-        TabView {
+        TabView(selection: $selectedTab) {
             NavigationStack {
                 AlarmsHomeView()
             }
             .tabItem {
                 Label("Alarms", systemImage: "alarm")
             }
+            .tag(0)
 
             NavigationStack {
                 InsightsView()
@@ -26,6 +37,7 @@ struct RootView: View {
             .tabItem {
                 Label("Insights", systemImage: "chart.bar.xaxis")
             }
+            .tag(1)
 
             NavigationStack {
                 SettingsView()
@@ -33,6 +45,7 @@ struct RootView: View {
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
             }
+            .tag(2)
         }
         .tint(RISETheme.Colors.primary)
         .fullScreenCover(isPresented: $appState.isPresentingChallenge) {
@@ -56,14 +69,23 @@ struct RootView: View {
             }
         }
         .task {
+            guard !suppressesAutomaticChallenge else { return }
             recordMissedAlarmsIfNeeded()
             openChallengeIfAlarmJustRang()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                openChallengeIfAlarmJustRang()
-            }
+            guard phase == .active, !suppressesAutomaticChallenge else { return }
+            openChallengeIfAlarmJustRang()
         }
+    }
+
+    /// Screenshot runs set this so seeded alarms never hijack the captured screen.
+    private var suppressesAutomaticChallenge: Bool {
+        #if DEBUG
+        LaunchOptions.suppressesAutomaticChallenge
+        #else
+        false
+        #endif
     }
 
     private var pendingAlarm: Alarm? {

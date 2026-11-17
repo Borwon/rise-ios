@@ -15,9 +15,13 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 35
 
+    env:
+      SCHEME: RISE
+      BUNDLE_ID: com.borwon.rise
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Show toolchain
         run: |
@@ -38,7 +42,7 @@ jobs:
           set -o pipefail
           xcodebuild \
             -project RISE.xcodeproj \
-            -scheme RISE \
+            -scheme "$SCHEME" \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
@@ -47,13 +51,13 @@ jobs:
 
       - name: Upload build log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-log
           path: build.log
           if-no-files-found: warn
 
-      - name: Boot simulator, install and screenshot
+      - name: Boot simulator, install and capture screens
         if: success()
         run: |
           set -euo pipefail
@@ -64,15 +68,25 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl ui "$UDID" appearance dark
           xcrun simctl install "$UDID" build/Build/Products/Debug-iphonesimulator/RISE.app
-          xcrun simctl launch "$UDID" com.borwon.rise
-          sleep 6
-          xcrun simctl io "$UDID" screenshot 01-onboarding.png
-          sleep 2
-          xcrun simctl io "$UDID" screenshot 02-onboarding.png
+
+          # Fresh install shows onboarding; later launches pass -riseScreen so the
+          # capture lands on the requested tab with seeded demo data.
+          capture() {
+            local name="$1"; shift
+            xcrun simctl terminate "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
+            xcrun simctl launch "$UDID" "$BUNDLE_ID" "$@" >/dev/null
+            sleep 6
+            xcrun simctl io "$UDID" screenshot "$name.png"
+          }
+
+          capture 01-onboarding   -riseSeedDemoData
+          capture 02-alarms       -riseScreen alarms -riseSeedDemoData
+          capture 03-insights     -riseScreen insights -riseSeedDemoData
+          capture 04-settings     -riseScreen settings -riseSeedDemoData
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: screenshots
           path: "*.png"
