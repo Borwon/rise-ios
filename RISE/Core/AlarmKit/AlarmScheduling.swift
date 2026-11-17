@@ -63,7 +63,7 @@ struct AlarmKitScheduler: AlarmSchedulingService {
         Bundle.main.object(forInfoDictionaryKey: "NSAlarmKitUsageDescription") != nil
     }
 
-    let kindDescription = "System alarm (AlarmKit)"
+    let kindDescription = "Rings as a system alarm — through Silent mode and Focus."
 
     func permissionState() async -> AlarmPermissionState {
         switch AlarmManager.shared.authorizationState {
@@ -176,7 +176,7 @@ struct AlarmKitScheduler: AlarmSchedulingService {
 
 @MainActor
 struct NotificationAlarmScheduler: AlarmSchedulingService {
-    let kindDescription = "Notification reminder (no AlarmKit)"
+    let kindDescription = "Falls back to notifications — Silent mode and Focus may mute it."
 
     private let center = UNUserNotificationCenter.current()
 

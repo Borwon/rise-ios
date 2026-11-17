@@ -79,6 +79,12 @@ struct AlarmsHomeView: View {
             SoundLibrary.seedBuiltInsIfNeeded(context: modelContext)
             await viewModel.refreshPermission()
             await viewModel.refreshSchedules(for: alarms, context: modelContext)
+
+            #if DEBUG
+            if LaunchOptions.opensAlarmEditor {
+                editorTarget = alarms.first.map(EditorTarget.edit) ?? .new
+            }
+            #endif
         }
         .sheet(item: $editorTarget) { target in
             switch target {
@@ -156,7 +162,7 @@ struct AlarmsHomeView: View {
             RISEInlineMessage(
                 text: viewModel.permission == .denied
                     ? "Alarm permission is off. Open iOS Settings → RISE. → Alarms to turn it back on."
-                    : "RISE. needs alarm permission to ring on time. \(viewModel.schedulerKind).",
+                    : "RISE. needs alarm permission so your alarms ring on time.",
                 kind: viewModel.permission == .denied ? .error : .info
             )
 

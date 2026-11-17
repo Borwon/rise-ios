@@ -28,14 +28,12 @@ struct AlarmCardView: View {
                             .lineLimit(1)
                     }
 
-                    HStack(spacing: RISETheme.Spacing.sm) {
-                        Label(alarm.challengeType.title, systemImage: alarm.challengeType.symbol)
-                        Text("·")
-                        Text(alarm.soundName)
+                    ViewThatFits(in: .horizontal) {
+                        metaLine(includeSound: true)
+                        metaLine(includeSound: false)
                     }
                     .font(RISETheme.Typography.caption)
                     .foregroundStyle(RISETheme.Colors.muted)
-                    .lineLimit(1)
 
                     if let error = alarm.lastScheduleError {
                         Text(error)
@@ -64,6 +62,21 @@ struct AlarmCardView: View {
         .opacity(isEnabled ? 1 : 0.7)
         .contextMenu {
             Button("Delete Alarm", role: .destructive, action: onDelete)
+        }
+    }
+
+    /// The sound name is dropped instead of truncated when the card is narrow,
+    /// so the challenge type always stays readable.
+    private func metaLine(includeSound: Bool) -> some View {
+        HStack(spacing: RISETheme.Spacing.xs) {
+            Label(alarm.challengeType.title, systemImage: alarm.challengeType.symbol)
+                .lineLimit(1)
+
+            if includeSound {
+                Text("·")
+                Text(alarm.soundName)
+                    .lineLimit(1)
+            }
         }
     }
 }

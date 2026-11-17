@@ -69,7 +69,10 @@ struct RootView: View {
             }
         }
         .task {
-            guard !suppressesAutomaticChallenge else { return }
+            guard !suppressesAutomaticChallenge else {
+                openRequestedScreenshotScreen()
+                return
+            }
             recordMissedAlarmsIfNeeded()
             openChallengeIfAlarmJustRang()
         }
@@ -85,6 +88,14 @@ struct RootView: View {
         LaunchOptions.suppressesAutomaticChallenge
         #else
         false
+        #endif
+    }
+
+    /// Opens a debug-requested screen so CI can capture it without UI automation.
+    private func openRequestedScreenshotScreen() {
+        #if DEBUG
+        guard LaunchOptions.opensChallengePreview, let alarm = alarms.first else { return }
+        appState.beginChallenge(for: alarm.id, isPreview: true)
         #endif
     }
 

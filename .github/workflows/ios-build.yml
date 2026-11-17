@@ -83,6 +83,8 @@ jobs:
           capture 02-alarms       -riseScreen alarms -riseSeedDemoData
           capture 03-insights     -riseScreen insights -riseSeedDemoData
           capture 04-settings     -riseScreen settings -riseSeedDemoData
+          capture 05-alarm-editor -riseScreen editor -riseSeedDemoData
+          capture 06-challenge    -riseScreen challenge -riseSeedDemoData
 
       - name: Upload screenshots
         if: always()

@@ -34,6 +34,15 @@ enum LaunchOptions {
         }
     }
 
+    /// Extra screens the screenshot job wants to open automatically.
+    static var opensChallengePreview: Bool {
+        screen == "challenge"
+    }
+
+    static var opensAlarmEditor: Bool {
+        screen == "editor"
+    }
+
     /// Keeps the app from auto-opening a challenge when a seeded alarm happens
     /// to fall inside the wake-up window during a screenshot run.
     static var suppressesAutomaticChallenge: Bool {
