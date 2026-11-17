@@ -9,30 +9,23 @@ struct MathChallengeView: View {
     private var isSubmitEnabled: Bool { !input.isEmpty }
 
     var body: some View {
-        VStack(spacing: RISETheme.Spacing.lg) {
-            VStack(spacing: RISETheme.Spacing.sm) {
-                Text(question.prompt)
-                    .font(.system(size: 44, weight: .bold, design: .default))
-                    .monospacedDigit()
-                    .foregroundStyle(RISETheme.Colors.text)
-                    .minimumScaleFactor(0.6)
-                    .lineLimit(1)
-                    .accessibilityLabel("What is \(question.prompt)?")
-
-                Text("Enter your answer below.")
-                    .font(RISETheme.Typography.body)
-                    .foregroundStyle(RISETheme.Colors.muted)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, RISETheme.Spacing.lg)
-            .riseCard(padding: RISETheme.Spacing.lg)
+        VStack(spacing: RISETheme.Spacing.md) {
+            Text(question.prompt)
+                .font(.system(size: 44, weight: .bold, design: .default))
+                .monospacedDigit()
+                .foregroundStyle(RISETheme.Colors.text)
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .accessibilityLabel("What is \(question.prompt)?")
+                .riseCard(padding: RISETheme.Spacing.md)
 
             Text(input.isEmpty ? "–" : input)
                 .font(.system(size: 40, weight: .semibold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(input.isEmpty ? RISETheme.Colors.muted : RISETheme.Colors.text)
                 .frame(maxWidth: .infinity)
-                .frame(height: 72)
+                .frame(height: 64)
                 .background(RISETheme.Colors.elevated)
                 .clipShape(RoundedRectangle(cornerRadius: RISETheme.Radius.medium, style: .continuous))
                 .accessibilityLabel("Your answer")
