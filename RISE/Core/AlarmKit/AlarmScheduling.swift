@@ -93,8 +93,14 @@ struct AlarmKitScheduler: AlarmSchedulingService {
         let state = await requestAuthorization()
         guard state == .authorized else { throw AlarmSchedulingError.notAuthorized }
 
+        // iOS 26.0 requires `stopButton`; the shorter initialiser arrived in 26.1.
         let alert = AlarmPresentation.Alert(
             title: LocalizedStringResource(stringLiteral: alarm.displayName),
+            stopButton: AlarmButton(
+                text: "Stop",
+                textColor: .white,
+                systemImageName: "stop.fill"
+            ),
             secondaryButton: AlarmButton(
                 text: "Snooze",
                 textColor: .white,
@@ -115,13 +121,13 @@ struct AlarmKitScheduler: AlarmSchedulingService {
             label: alarm.displayName,
             challengeType: alarm.challengeType.rawValue
         )
-        let attributes = AlarmAttributes(
+        let attributes = AlarmAttributes<RiseAlarmMetadata>(
             presentation: presentation,
             metadata: metadata,
             tintColor: RISETheme.Colors.primary
         )
 
-        let schedule: Alarm.Schedule = alarm.weekdays.isEmpty
+        let schedule: AlarmKit.Alarm.Schedule = alarm.weekdays.isEmpty
             ? .relative(.init(
                 time: .init(hour: alarm.hour, minute: alarm.minute),
                 repeats: .never
@@ -131,8 +137,8 @@ struct AlarmKitScheduler: AlarmSchedulingService {
                 repeats: .weekly(Self.localeWeekdays(from: alarm.weekdays))
             ))
 
-        let configuration = AlarmManager.AlarmConfiguration(
-            countdownDuration: .init(
+        let configuration = AlarmManager.AlarmConfiguration<RiseAlarmMetadata>(
+            countdownDuration: AlarmKit.Alarm.CountdownDuration(
                 preAlert: nil,
                 postAlert: TimeInterval(alarm.snoozeMinutes * 60)
             ),
