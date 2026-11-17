@@ -41,7 +41,6 @@ struct RISEButton: View {
                         .stroke(RISETheme.Colors.elevated, lineWidth: 1)
                 }
             }
-            .opacity(effectiveEnabled ? 1 : 0.45)
         }
         .buttonStyle(.plain)
         .disabled(!effectiveEnabled)
@@ -50,22 +49,29 @@ struct RISEButton: View {
     }
 
     private var foreground: Color {
+        guard effectiveEnabled else { return RISETheme.Colors.muted }
         switch style {
-        case .primary: RISETheme.Colors.onPrimary
-        case .secondary: RISETheme.Colors.text
-        case .destructive: RISETheme.Colors.danger
+        case .primary: return RISETheme.Colors.onPrimary
+        case .secondary: return RISETheme.Colors.text
+        case .destructive: return RISETheme.Colors.danger
         }
     }
 
+    /// Disabled buttons get their own surface and text colours rather than a
+    /// blanket opacity, which made the label unreadable on the dark background.
     @ViewBuilder
     private var background: some View {
-        switch style {
-        case .primary:
-            RISETheme.Colors.primary
-        case .secondary:
-            RISETheme.Colors.surface
-        case .destructive:
-            RISETheme.Colors.danger.opacity(0.12)
+        if !effectiveEnabled {
+            RISETheme.Colors.elevated
+        } else {
+            switch style {
+            case .primary:
+                RISETheme.Colors.primary
+            case .secondary:
+                RISETheme.Colors.surface
+            case .destructive:
+                RISETheme.Colors.danger.opacity(0.12)
+            }
         }
     }
 }
