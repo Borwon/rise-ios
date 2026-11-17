@@ -73,9 +73,10 @@ jobs:
           # capture lands on the requested tab with seeded demo data.
           capture() {
             local name="$1"; shift
+            local wait="${CAPTURE_DELAY:-6}"
             xcrun simctl terminate "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
             xcrun simctl launch "$UDID" "$BUNDLE_ID" "$@" >/dev/null
-            sleep 6
+            sleep "$wait"
             xcrun simctl io "$UDID" screenshot "$name.png"
           }
 
@@ -83,8 +84,9 @@ jobs:
           capture 02-alarms       -riseScreen alarms -riseSeedDemoData
           capture 03-insights     -riseScreen insights -riseSeedDemoData
           capture 04-settings     -riseScreen settings -riseSeedDemoData
-          capture 05-alarm-editor -riseScreen editor -riseSeedDemoData
-          capture 06-challenge    -riseScreen challenge -riseSeedDemoData
+          # Sheets and full-screen covers need longer to settle before capture.
+          CAPTURE_DELAY=10 capture 05-alarm-editor -riseScreen editor -riseSeedDemoData
+          CAPTURE_DELAY=10 capture 06-challenge    -riseScreen challenge -riseSeedDemoData
 
       - name: Upload screenshots
         if: always()

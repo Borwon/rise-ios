@@ -82,7 +82,7 @@ struct ChallengeFlowView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: RISETheme.Spacing.xs) {
+        VStack(alignment: .leading, spacing: RISETheme.Spacing.sm) {
             HStack {
                 Text("RISE.")
                     .font(.system(size: 15, weight: .bold))
@@ -101,23 +101,28 @@ struct ChallengeFlowView: View {
                     .clipShape(Capsule())
             }
 
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                Text(context.date.formatted(date: .omitted, time: .shortened))
-                    .font(.system(size: 56, weight: .bold, design: .default))
-                    .monospacedDigit()
-                    .foregroundStyle(RISETheme.Colors.text)
-                    .accessibilityLabel("Current time \(context.date.formatted(date: .omitted, time: .shortened))")
-            }
+            HStack(alignment: .firstTextBaseline, spacing: RISETheme.Spacing.sm) {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    Text(context.date.formatted(date: .omitted, time: .shortened))
+                        .font(.system(size: 48, weight: .bold, design: .default))
+                        .monospacedDigit()
+                        .foregroundStyle(RISETheme.Colors.text)
+                        .accessibilityLabel("Current time \(context.date.formatted(date: .omitted, time: .shortened))")
+                }
 
-            Text(greeting)
-                .font(RISETheme.Typography.body)
-                .foregroundStyle(RISETheme.Colors.muted)
+                if let config, config.timeLimitSeconds > 0 {
+                    Text("\(remainingSeconds)s")
+                        .font(RISETheme.Typography.caption.weight(.semibold))
+                        .foregroundStyle(remainingSeconds <= 5 ? RISETheme.Colors.danger : RISETheme.Colors.muted)
+                        .monospacedDigit()
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(RISETheme.Colors.surface)
+                        .clipShape(Capsule())
+                        .accessibilityLabel("Time limit \(remainingSeconds) seconds")
+                }
 
-            if let config, config.timeLimitSeconds > 0 {
-                Text("Time limit · \(remainingSeconds)s")
-                    .font(RISETheme.Typography.caption.weight(.semibold))
-                    .foregroundStyle(remainingSeconds <= 5 ? RISETheme.Colors.danger : RISETheme.Colors.muted)
-                    .monospacedDigit()
+                Spacer()
             }
         }
     }
@@ -297,15 +302,6 @@ struct ChallengeFlowView: View {
                 feedback = Feedback(text: "Time is up. Try this one again.", kind: .error)
                 restartCountdown()
             }
-        }
-    }
-
-    private var greeting: String {
-        let hour = Calendar.current.component(.hour, from: .now)
-        switch hour {
-        case 5..<12: return "Good morning."
-        case 12..<17: return "Good afternoon."
-        default: return "Good evening."
         }
     }
 
